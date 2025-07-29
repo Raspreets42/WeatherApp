@@ -25,15 +25,6 @@ const AppContent = () => {
 
       setCurrentWeather(currentData);
       setForecast(forecastData);
-
-      // Save to MongoDB
-      await weatherAPI.saveWeatherData({
-        latitude: lat,
-        longitude: lon,
-        location: `${lat.toFixed(2)}, ${lon.toFixed(2)}`,
-        currentWeather: currentData,
-        forecast: forecastData.daily
-      });
     } catch (err) {
       setError(err.message);
     } finally {

@@ -21,21 +21,4 @@ export const weatherAPI = {
         }
     },
 
-    saveWeatherData: async (data) => {
-        try {
-            const response = await axios.post(`${API_BASE_URL}/weather/save`, data);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to save weather data');
-        }
-    },
-
-    getWeatherHistory: async () => {
-        try {
-            const response = await axios.get(`${API_BASE_URL}/weather/history`);
-            return response.data;
-        } catch (error) {
-            throw new Error('Failed to fetch weather history');
-        }
-    }
 };

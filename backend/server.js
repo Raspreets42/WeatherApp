@@ -12,26 +12,6 @@ const OPEN_METEO_URL = process.env.OPEN_METEO_URL || 5000;
 app.use(cors());
 app.use(express.json());
 
-// MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || `mongodb+srv://raspreets89:RasMongoWeatherApp04@cluster0.0klkdaf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
-
-// Weather Schema
-const weatherSchema = new mongoose.Schema({
-    latitude: Number,
-    longitude: Number,
-    location: String,
-    timestamp: { type: Date, default: Date.now },
-    currentWeather: Object,
-    forecast: Array,
-},{
-    capped: { size: 102400, max: 2 }  // 100 KB, max 2 docs
-});
-
-const Weather = mongoose.model('Weather', weatherSchema);
-
 const formatHourlyWeatherData = (hourlyData) => {
     const timeList = hourlyData.time || [];
     const weatherData = [];
@@ -142,27 +122,6 @@ app.get('/api/weather/forecast/:lat/:lon', async (req, res) => {
         const { lat, lon } = req.params;
         const forecastData = await fetchForecast(lat, lon);
         res.json(forecastData);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Save weather data to MongoDB
-app.post('/api/weather/save', async (req, res) => {
-    try {
-        const weather = new Weather(req.body);
-        await weather.save();
-        res.json({ message: 'Weather data saved successfully' });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Get weather history
-app.get('/api/weather/history', async (req, res) => {
-    try {
-        const history = await Weather.find().sort({ timestamp: -1 }).limit(10);
-        res.json(history);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
